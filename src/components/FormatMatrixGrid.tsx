@@ -3,133 +3,38 @@
 import React from 'react';
 import Link from 'next/link';
 import { CONVERSION_PAIRS } from '@/lib/format-registry';
-import { FileText, Table, Image as ImageIcon, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export function FormatMatrixGrid() {
-  const documentPairs = CONVERSION_PAIRS.filter((p) => p.category === 'document');
-  const dataPairs = CONVERSION_PAIRS.filter((p) => p.category === 'data');
-  const imagePairs = CONVERSION_PAIRS.filter((p) => p.category === 'image');
-
   return (
-    <section className="py-12 border-t border-zinc-200/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="max-w-xl mb-8">
-          <div className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-zinc-100 border border-zinc-200 text-zinc-600 text-xs font-mono mb-2">
-            <span>全格式互转导航</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900">
-            常用文档、数据与图片本地互转
+    <section className="py-8 border-t border-zinc-200">
+      <div className="max-w-5xl mx-auto">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-zinc-900">
+            支持的格式转换
           </h2>
-          <p className="mt-1.5 text-xs sm:text-sm text-zinc-600">
-            针对日常办公、知识库整理与技术排版的高频需求，无需配置环境，点击即用。
-          </p>
+          <span className="text-xs text-zinc-400">点击进入单功能页</span>
         </div>
 
-        <div className="space-y-8">
-          {/* 1. 文档排版互转 */}
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-semibold text-zinc-700 mb-3">
-              <FileText className="w-3.5 h-3.5 text-emerald-600" />
-              <span>排版与格式互转 (PDF / Markdown / Word)</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {documentPairs.map((pair) => (
-                <Link
-                  key={pair.slug}
-                  href={`/convert/${pair.slug}`}
-                  className="group rounded-xl border border-zinc-200 bg-white p-4 hover:border-zinc-300 hover:shadow-2xs transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors">
-                        {pair.name}
-                      </span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 border border-zinc-200">
-                        {pair.badge}
-                      </span>
-                    </div>
-                    <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
-                      {pair.shortDesc}
-                    </p>
-                  </div>
-                  <div className="mt-3 pt-2.5 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-400 group-hover:text-emerald-700">
-                    <span>{pair.from} → {pair.to}</span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* 2. 表格与数据 */}
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-semibold text-zinc-700 mb-3">
-              <Table className="w-3.5 h-3.5 text-blue-600" />
-              <span>表格与数据结构 (CSV / JSON / Markdown 表格)</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {dataPairs.map((pair) => (
-                <Link
-                  key={pair.slug}
-                  href={`/convert/${pair.slug}`}
-                  className="group rounded-xl border border-zinc-200 bg-white p-4 hover:border-zinc-300 hover:shadow-2xs transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-zinc-900 group-hover:text-blue-700 transition-colors">
-                        {pair.name}
-                      </span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 border border-zinc-200">
-                        {pair.badge}
-                      </span>
-                    </div>
-                    <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
-                      {pair.shortDesc}
-                    </p>
-                  </div>
-                  <div className="mt-3 pt-2.5 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-400 group-hover:text-blue-700">
-                    <span>{pair.from} → {pair.to}</span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* 3. 图片与版式 */}
-          <div>
-            <div className="flex items-center space-x-2 text-xs font-semibold text-zinc-700 mb-3">
-              <ImageIcon className="w-3.5 h-3.5 text-amber-600" />
-              <span>图片与办公合成 (多图转 PDF / 提取高清图)</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {imagePairs.map((pair) => (
-                <Link
-                  key={pair.slug}
-                  href={`/convert/${pair.slug}`}
-                  className="group rounded-xl border border-zinc-200 bg-white p-4 hover:border-zinc-300 hover:shadow-2xs transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-xs font-semibold text-zinc-900 group-hover:text-amber-700 transition-colors">
-                        {pair.name}
-                      </span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 text-zinc-600 border border-zinc-200">
-                        {pair.badge}
-                      </span>
-                    </div>
-                    <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
-                      {pair.shortDesc}
-                    </p>
-                  </div>
-                  <div className="mt-3 pt-2.5 border-t border-zinc-100 flex items-center justify-between text-[11px] text-zinc-400 group-hover:text-amber-700">
-                    <span>{pair.from} → {pair.to}</span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
+        {/* 紧凑清爽的网格 */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+          {CONVERSION_PAIRS.map((pair) => (
+            <Link
+              key={pair.slug}
+              href={`/convert/${pair.slug}`}
+              className="group p-3 rounded-xl border border-zinc-200/90 bg-white hover:border-zinc-400 hover:shadow-2xs transition-all flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors">
+                  {pair.name}
+                </span>
+                <ArrowRight className="w-3 h-3 text-zinc-400 group-hover:text-emerald-700 transform group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <span className="text-[11px] text-zinc-400 mt-1 font-mono">
+                {pair.from} → {pair.to}
+              </span>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

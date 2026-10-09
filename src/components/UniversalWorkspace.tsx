@@ -221,10 +221,10 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
             </div>
 
             <h3 className="text-base sm:text-lg font-semibold text-zinc-900 mb-1">
-              拖入任意文件，或 <span className="text-emerald-700 underline underline-offset-2">点击浏览</span>
+              把文件拖到这里，或 <span className="text-emerald-700 underline underline-offset-2">点击选择文件</span>
             </h3>
             <p className="text-xs sm:text-sm text-zinc-500 max-w-sm mb-4">
-              自动识别格式（PDF、Word、CSV、JSON、Markdown、图片），100% 浏览器本地运算秒转。
+              直接在你的浏览器本地转，不上传服务器，保护隐私。
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-mono text-zinc-600">
@@ -306,7 +306,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
             <Sparkles className="w-5 h-5 text-emerald-600 animate-spin" />
           </div>
           <h4 className="text-sm font-semibold text-zinc-900">{statusText}</h4>
-          <p className="text-xs font-mono text-zinc-500 mt-1">本地 RAM 运算，无需等待排队</p>
+          <p className="text-xs text-zinc-500 mt-1">正在本地转换，无需等待...</p>
         </div>
       )}
 
