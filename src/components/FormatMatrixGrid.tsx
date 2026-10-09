@@ -9,12 +9,9 @@ export function FormatMatrixGrid() {
   return (
     <section className="py-8 border-t border-zinc-200">
       <div className="max-w-5xl mx-auto">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-zinc-900">
-            支持的格式转换
-          </h2>
-          <span className="text-xs text-zinc-400">点击进入单功能页</span>
-        </div>
+        <h2 className="text-sm font-semibold text-zinc-900 mb-4">
+          格式列表
+        </h2>
 
         {/* 紧凑清爽的网格 */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">

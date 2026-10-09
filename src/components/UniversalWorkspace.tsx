@@ -220,12 +220,9 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
               <FileUp className="w-6 h-6 text-zinc-800" strokeWidth={1.5} />
             </div>
 
-            <h3 className="text-base sm:text-lg font-semibold text-zinc-900 mb-1">
-              把文件拖到这里，或 <span className="text-emerald-700 underline underline-offset-2">点击选择文件</span>
+            <h3 className="text-base sm:text-lg font-semibold text-zinc-900 mb-3">
+              拖入文件，或 <span className="text-emerald-700 underline underline-offset-2">点击选择</span>
             </h3>
-            <p className="text-xs sm:text-sm text-zinc-500 max-w-sm mb-4">
-              直接在你的浏览器本地转，不上传服务器，保护隐私。
-            </p>
 
             <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-mono text-zinc-600">
               <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.PDF</span>
@@ -264,8 +261,8 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
           </div>
 
           <div>
-            <label className="text-xs font-mono text-zinc-500 uppercase tracking-wider block mb-3">
-              选择你希望转换的目标格式：
+            <label className="text-xs text-zinc-500 block mb-3">
+              选择目标格式：
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {availableTargets.map((target) => (
@@ -305,8 +302,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
           <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-3">
             <Sparkles className="w-5 h-5 text-emerald-600 animate-spin" />
           </div>
-          <h4 className="text-sm font-semibold text-zinc-900">{statusText}</h4>
-          <p className="text-xs text-zinc-500 mt-1">正在本地转换，无需等待...</p>
+          <h4 className="text-sm font-semibold text-zinc-900">{statusText || '正在处理...'}</h4>
         </div>
       )}
 
@@ -332,9 +328,6 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
               <span className="text-xs font-semibold text-zinc-900">
                 {file?.name} → {selectedTarget?.name}
               </span>
-              <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                转换成功
-              </span>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -351,7 +344,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
                   ) : (
                     <>
                       <Copy className="w-3.5 h-3.5 text-zinc-500" />
-                      <span>一键复制</span>
+                      <span>复制</span>
                     </>
                   )}
                 </button>
@@ -362,7 +355,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
                 className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium transition-all shadow-2xs"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>下载文件 ({selectedTarget?.toExt})</span>
+                <span>下载 ({selectedTarget?.toExt})</span>
               </button>
 
               <button

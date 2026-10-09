@@ -89,7 +89,7 @@ export default async function ConvertPage({ params }: PageProps) {
         <div className="mb-6 flex items-center space-x-2 text-xs text-zinc-500">
           <Link href="/" className="hover:text-zinc-900 transition-colors flex items-center space-x-1">
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>返回首页</span>
+            <span>首页</span>
           </Link>
           <span>/</span>
           <span className="text-zinc-900 font-medium">{pair.name}</span>
@@ -100,9 +100,6 @@ export default async function ConvertPage({ params }: PageProps) {
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900">
             {pair.name}
           </h1>
-          <p className="mt-2 text-sm text-zinc-500">
-            {pair.shortDesc}（本地转换，不上传服务器）
-          </p>
         </div>
 
         {/* 转换工作区 */}
