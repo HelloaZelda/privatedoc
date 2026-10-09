@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   FileUp,
   FileCheck2,
@@ -9,13 +9,7 @@ import {
   Download,
   RotateCcw,
   Sparkles,
-  ArrowRight,
-  Layers,
   AlertCircle,
-  FileText,
-  FileCode,
-  Table,
-  Image as ImageIcon,
 } from 'lucide-react';
 import { detectSupportedTargetFormats, ConversionPair, CONVERSION_PAIRS } from '@/lib/format-registry';
 import {
@@ -23,13 +17,15 @@ import {
   convertPdfToImages,
   convertDocxToMarkdown,
   convertDocxToHtml,
+  convertDocxToTxt,
   convertCsvToMarkdownTable,
   convertCsvToJson,
   convertJsonToCsv,
   convertImagesToPdf,
+  convertImageFormat,
 } from '@/lib/multi-converter';
 import { convertPdfToMarkdown } from '@/lib/pdf-to-markdown';
-import { parseMarkdownToHtml } from '@/lib/markdown-to-pdf';
+import { parseMarkdownToHtml, exportElementToPdf } from '@/lib/markdown-to-pdf';
 
 interface UniversalWorkspaceProps {
   initialSlug?: string;
@@ -50,13 +46,13 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // If initialSlug is passed, find matching pair
-  React.useEffect(() => {
-    if (initialSlug) {
-      const match = CONVERSION_PAIRS.find((p) => p.slug === initialSlug);
-      if (match) setSelectedTarget(match);
+  const lockedPair = initialSlug ? CONVERSION_PAIRS.find((p) => p.slug === initialSlug) : null;
+
+  useEffect(() => {
+    if (lockedPair) {
+      setSelectedTarget(lockedPair);
     }
-  }, [initialSlug]);
+  }, [lockedPair]);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -94,51 +90,83 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
     const matches = detectSupportedTargetFormats(chosenFile.name);
     setAvailableTargets(matches);
 
+    // If on a specific programmatic landing page (e.g. /convert/webp-to-png)
+    if (lockedPair) {
+      const isMatching = matches.some((m) => m.slug === lockedPair.slug);
+      if (isMatching) {
+        setSelectedTarget(lockedPair);
+        executeConversion(chosenFile, lockedPair);
+        return;
+      }
+    }
+
     if (matches.length > 0) {
-      // Pick first matching target or keep if already matches
-      setSelectedTarget(matches[0]);
+      const defaultTarget = matches[0];
+      setSelectedTarget(defaultTarget);
+      // Auto execute if only one conversion target exists
+      if (matches.length === 1) {
+        executeConversion(chosenFile, defaultTarget);
+      }
     } else {
       setSelectedTarget(null);
-      setError(`当前格式暂未支持。支持的格式包括：.pdf, .md, .docx, .csv, .json, .png, .jpg`);
+      setError(`当前格式暂未支持。支持格式包括：PDF, Word, CSV, JSON, Markdown, PNG, JPG, WebP`);
     }
   };
 
-  const executeConversion = async (target: ConversionPair) => {
-    if (!file) return;
+  const executeConversion = async (targetFile: File, target: ConversionPair) => {
     setIsProcessing(true);
-    setStatusText(`正在调用本地 Web Worker 转换为 ${target.to}...`);
+    setStatusText(`正在本地处理为 ${target.to}...`);
     setError(null);
 
     try {
       if (target.slug === 'pdf-to-markdown') {
-        const md = await convertPdfToMarkdown(file, (curr, total, msg) => setStatusText(msg));
+        const md = await convertPdfToMarkdown(targetFile, (curr, total, msg) => setStatusText(msg));
         setResultContent(md);
       } else if (target.slug === 'pdf-to-txt') {
-        const txt = await convertPdfToTxt(file, (msg) => setStatusText(msg));
+        const txt = await convertPdfToTxt(targetFile, (msg) => setStatusText(msg));
         setResultContent(txt);
       } else if (target.slug === 'pdf-to-images') {
-        const imgs = await convertPdfToImages(file);
+        const imgs = await convertPdfToImages(targetFile);
         setResultImages(imgs);
+      } else if (target.slug === 'webp-to-png' || target.slug === 'jpg-to-png') {
+        const res = await convertImageFormat(targetFile, 'image/png');
+        setResultBlob(res.blob);
+        setResultImages([res.dataUrl]);
+      } else if (target.slug === 'png-to-webp' || target.slug === 'jpg-to-webp') {
+        const res = await convertImageFormat(targetFile, 'image/webp', 0.9);
+        setResultBlob(res.blob);
+        setResultImages([res.dataUrl]);
+      } else if (target.slug === 'png-to-jpg' || target.slug === 'webp-to-jpg') {
+        const res = await convertImageFormat(targetFile, 'image/jpeg', 0.95);
+        setResultBlob(res.blob);
+        setResultImages([res.dataUrl]);
       } else if (target.slug === 'docx-to-markdown') {
-        const md = await convertDocxToMarkdown(file);
+        const md = await convertDocxToMarkdown(targetFile);
         setResultContent(md);
       } else if (target.slug === 'docx-to-html') {
-        const html = await convertDocxToHtml(file);
+        const html = await convertDocxToHtml(targetFile);
+        setResultContent(html);
+      } else if (target.slug === 'docx-to-txt') {
+        const txt = await convertDocxToTxt(targetFile);
+        setResultContent(txt);
+      } else if (target.slug === 'markdown-to-html') {
+        const text = await targetFile.text();
+        const html = parseMarkdownToHtml(text);
         setResultContent(html);
       } else if (target.slug === 'csv-to-markdown') {
-        const text = await file.text();
+        const text = await targetFile.text();
         const mdTable = convertCsvToMarkdownTable(text);
         setResultContent(mdTable);
       } else if (target.slug === 'csv-to-json') {
-        const text = await file.text();
+        const text = await targetFile.text();
         const json = convertCsvToJson(text);
         setResultContent(json);
       } else if (target.slug === 'json-to-csv') {
-        const text = await file.text();
+        const text = await targetFile.text();
         const csv = convertJsonToCsv(text);
         setResultContent(csv);
       } else if (target.slug === 'images-to-pdf') {
-        const blob = await convertImagesToPdf([file]);
+        const blob = await convertImagesToPdf([targetFile]);
         setResultBlob(blob);
       }
     } catch (err: unknown) {
@@ -154,7 +182,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
       const url = URL.createObjectURL(resultBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${file?.name.replace(/\.[^/.]+$/, '') || 'document'}${selectedTarget.toExt}`;
+      a.download = `${file?.name.replace(/\.[^/.]+$/, '') || 'converted'}${selectedTarget.toExt}`;
       a.click();
       URL.revokeObjectURL(url);
       return;
@@ -166,7 +194,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${file?.name.replace(/\.[^/.]+$/, '') || 'document'}${selectedTarget.toExt}`;
+      a.download = `${file?.name.replace(/\.[^/.]+$/, '') || 'converted'}${selectedTarget.toExt}`;
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -186,16 +214,21 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
   const resetAll = () => {
     setFile(null);
     setAvailableTargets([]);
-    setSelectedTarget(null);
+    if (!lockedPair) {
+      setSelectedTarget(null);
+    }
     setResultContent('');
     setResultImages([]);
     setResultBlob(null);
     setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
     <div className="w-full space-y-6">
-      {/* File Upload / Dropzone */}
+      {/* Upload Dropzone */}
       {!file && (
         <div
           onDragOver={handleDragOver}
@@ -211,6 +244,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
           <input
             ref={fileInputRef}
             type="file"
+            accept={lockedPair ? lockedPair.fromExt.join(',') : undefined}
             onChange={handleFileChange}
             className="hidden"
           />
@@ -220,24 +254,49 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
               <FileUp className="w-6 h-6 text-zinc-800" strokeWidth={1.5} />
             </div>
 
-            <h3 className="text-base sm:text-lg font-semibold text-zinc-900 mb-3">
-              拖入文件，或 <span className="text-emerald-700 underline underline-offset-2">点击选择</span>
+            <h3 className="text-base sm:text-lg font-semibold text-zinc-900 mb-2">
+              {lockedPair ? (
+                <>
+                  拖入 <span className="text-zinc-900 font-bold">{lockedPair.from}</span> 文件，直接转为{' '}
+                  <span className="text-emerald-700 font-bold">{lockedPair.to}</span>
+                </>
+              ) : (
+                <>
+                  拖入文件，或 <span className="text-emerald-700 underline underline-offset-2">点击选择</span>
+                </>
+              )}
             </h3>
 
+            <p className="text-xs text-zinc-400 mb-4">
+              免登录 · 不限文件大小 · 纯本地转换
+            </p>
+
             <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-mono text-zinc-600">
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.PDF</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.DOCX (Word)</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.CSV</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.JSON</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.MD</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.PNG / .JPG</span>
+              {lockedPair ? (
+                lockedPair.fromExt.map((ext) => (
+                  <span key={ext} className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200 uppercase font-semibold">
+                    {ext}
+                  </span>
+                ))
+              ) : (
+                <>
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.WEBP</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.PNG</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.JPG</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.PDF</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.DOCX</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.CSV</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.JSON</span>
+                  <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.MD</span>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Target Format Selector when File is loaded */}
-      {file && !resultContent && resultImages.length === 0 && !resultBlob && (
+      {/* Target Format Selector when File is loaded and multiple options available */}
+      {file && !resultContent && resultImages.length === 0 && !resultBlob && !isProcessing && (
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 shadow-xs space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-100 pb-5">
             <div className="flex items-center space-x-3">
@@ -247,7 +306,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
               <div>
                 <h4 className="text-sm font-semibold text-zinc-900">{file.name}</h4>
                 <p className="text-xs font-mono text-zinc-500">
-                  {(file.size / 1024).toFixed(1)} KB • 已就绪
+                  {(file.size / 1024).toFixed(1)} KB
                 </p>
               </div>
             </div>
@@ -270,7 +329,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
                   key={target.slug}
                   onClick={() => {
                     setSelectedTarget(target);
-                    executeConversion(target);
+                    executeConversion(file, target);
                   }}
                   className={`text-left p-4 rounded-xl border transition-all ${
                     selectedTarget?.slug === target.slug
@@ -368,7 +427,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
             </div>
           </div>
 
-          {/* Result Content Body */}
+          {/* Result Content Body (Text) */}
           {resultContent && (
             <div className="p-4 sm:p-6 bg-zinc-50/30">
               <textarea
@@ -381,20 +440,21 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
             </div>
           )}
 
-          {/* Render Images if PDF to Images */}
+          {/* Render Images if Converted to Images */}
           {resultImages.length > 0 && (
             <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-zinc-50/50">
               {resultImages.map((imgSrc, idx) => (
                 <div key={idx} className="rounded-xl border border-zinc-200 bg-white p-2 shadow-2xs">
-                  <img src={imgSrc} alt={`Page ${idx + 1}`} className="w-full rounded border" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={imgSrc} alt={`Converted preview ${idx + 1}`} className="w-full rounded border max-h-80 object-contain bg-zinc-100" />
                   <div className="mt-2 flex items-center justify-between text-xs font-mono text-zinc-500 px-1">
-                    <span>第 {idx + 1} 页</span>
+                    <span>{selectedTarget?.to} 预览</span>
                     <a
                       href={imgSrc}
-                      download={`page-${idx + 1}.png`}
+                      download={`${file?.name.replace(/\.[^/.]+$/, '') || 'image'}${selectedTarget?.toExt || '.png'}`}
                       className="text-emerald-700 hover:underline"
                     >
-                      单张另存
+                      单独保存
                     </a>
                   </div>
                 </div>

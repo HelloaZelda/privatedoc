@@ -205,3 +205,49 @@ function loadImage(src: string): Promise<HTMLImageElement> {
     img.src = src;
   });
 }
+
+// 8. Single Image format conversion (WebP, PNG, JPG)
+export async function convertImageFormat(
+  file: File,
+  targetMime: 'image/png' | 'image/jpeg' | 'image/webp',
+  quality: number = 0.95
+): Promise<{ blob: Blob; dataUrl: string }> {
+  const dataUrl = await readFileAsDataUrl(file);
+  const img = await loadImage(dataUrl);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth || img.width;
+  canvas.height = img.naturalHeight || img.height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D context unavailable');
+
+  if (targetMime === 'image/jpeg') {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  ctx.drawImage(img, 0, 0);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve({ blob, dataUrl: canvas.toDataURL(targetMime, quality) });
+        } else {
+          reject(new Error('Failed to convert image in canvas'));
+        }
+      },
+      targetMime,
+      quality
+    );
+  });
+}
+
+// 9. DOCX to TXT
+export async function convertDocxToTxt(file: File): Promise<string> {
+  const mammoth = await import('mammoth');
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer });
+  return result.value;
+}
+
