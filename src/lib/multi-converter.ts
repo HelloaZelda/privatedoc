@@ -251,3 +251,58 @@ export async function convertDocxToTxt(file: File): Promise<string> {
   return result.value;
 }
 
+// 10. JSON to YAML
+export async function convertJsonToYaml(jsonStr: string): Promise<string> {
+  const YAML = (await import('yaml')).default;
+  const data = JSON.parse(jsonStr);
+  return YAML.stringify(data);
+}
+
+// 11. YAML to JSON
+export async function convertYamlToJson(yamlStr: string): Promise<string> {
+  const YAML = (await import('yaml')).default;
+  const data = YAML.parse(yamlStr);
+  return JSON.stringify(data, null, 2);
+}
+
+// 12. HTML to Markdown
+export function convertHtmlToMarkdown(htmlStr: string): string {
+  if (typeof window === 'undefined') return htmlStr;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlStr, 'text/html');
+
+  function nodeToMd(node: Node): string {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent || '';
+    }
+    if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+    const el = node as HTMLElement;
+    const tag = el.tagName.toLowerCase();
+    const childrenMd = Array.from(el.childNodes).map(nodeToMd).join('');
+
+    switch (tag) {
+      case 'h1': return `\n# ${childrenMd.trim()}\n\n`;
+      case 'h2': return `\n## ${childrenMd.trim()}\n\n`;
+      case 'h3': return `\n### ${childrenMd.trim()}\n\n`;
+      case 'h4': return `\n#### ${childrenMd.trim()}\n\n`;
+      case 'p': return `\n${childrenMd.trim()}\n\n`;
+      case 'strong':
+      case 'b': return `**${childrenMd}**`;
+      case 'em':
+      case 'i': return `*${childrenMd}*`;
+      case 'code': return `\`${childrenMd}\``;
+      case 'pre': return `\n\`\`\`\n${childrenMd.trim()}\n\`\`\`\n\n`;
+      case 'li': return `\n- ${childrenMd.trim()}`;
+      case 'ul':
+      case 'ol': return `\n${childrenMd}\n\n`;
+      case 'blockquote': return `\n> ${childrenMd.trim()}\n\n`;
+      case 'a': return `[${childrenMd}](${el.getAttribute('href') || ''})`;
+      default: return childrenMd;
+    }
+  }
+
+  return nodeToMd(doc.body).trim();
+}
+
+

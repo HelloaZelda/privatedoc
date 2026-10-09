@@ -23,6 +23,9 @@ import {
   convertJsonToCsv,
   convertImagesToPdf,
   convertImageFormat,
+  convertJsonToYaml,
+  convertYamlToJson,
+  convertHtmlToMarkdown,
 } from '@/lib/multi-converter';
 import { convertPdfToMarkdown } from '@/lib/pdf-to-markdown';
 import { parseMarkdownToHtml, exportElementToPdf } from '@/lib/markdown-to-pdf';
@@ -128,7 +131,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
       } else if (target.slug === 'pdf-to-images') {
         const imgs = await convertPdfToImages(targetFile);
         setResultImages(imgs);
-      } else if (target.slug === 'webp-to-png' || target.slug === 'jpg-to-png') {
+      } else if (target.slug === 'webp-to-png' || target.slug === 'jpg-to-png' || target.slug === 'svg-to-png') {
         const res = await convertImageFormat(targetFile, 'image/png');
         setResultBlob(res.blob);
         setResultImages([res.dataUrl]);
@@ -153,6 +156,10 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
         const text = await targetFile.text();
         const html = parseMarkdownToHtml(text);
         setResultContent(html);
+      } else if (target.slug === 'html-to-markdown') {
+        const text = await targetFile.text();
+        const md = convertHtmlToMarkdown(text);
+        setResultContent(md);
       } else if (target.slug === 'csv-to-markdown') {
         const text = await targetFile.text();
         const mdTable = convertCsvToMarkdownTable(text);
@@ -165,6 +172,14 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
         const text = await targetFile.text();
         const csv = convertJsonToCsv(text);
         setResultContent(csv);
+      } else if (target.slug === 'json-to-yaml') {
+        const text = await targetFile.text();
+        const yaml = await convertJsonToYaml(text);
+        setResultContent(yaml);
+      } else if (target.slug === 'yaml-to-json') {
+        const text = await targetFile.text();
+        const json = await convertYamlToJson(text);
+        setResultContent(json);
       } else if (target.slug === 'images-to-pdf') {
         const blob = await convertImagesToPdf([targetFile]);
         setResultBlob(blob);
