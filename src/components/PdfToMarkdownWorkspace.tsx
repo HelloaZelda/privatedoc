@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useTransition } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   FileUp,
   FileText,
@@ -57,14 +57,14 @@ export function PdfToMarkdownWorkspace() {
 
   const processSelectedFile = async (targetFile: File) => {
     if (!targetFile.name.toLowerCase().endsWith('.pdf')) {
-      setError('Please select a valid PDF document (.pdf).');
+      setError('请选择标准的 PDF 文档文件（.pdf 后缀）。');
       return;
     }
 
     setError(null);
     setFile(targetFile);
     setIsProcessing(true);
-    setProgress({ current: 0, total: 1, message: 'Opening PDF in local memory...' });
+    setProgress({ current: 0, total: 1, message: '正在初始化本地内存解析沙箱...' });
 
     try {
       const result = await convertPdfToMarkdown(targetFile, (current, total, message) => {
@@ -73,8 +73,8 @@ export function PdfToMarkdownWorkspace() {
       setMarkdown(result);
     } catch (err: unknown) {
       console.error('PDF parsing error:', err);
-      const errMsg = err instanceof Error ? err.message : 'Failed to extract text from PDF.';
-      setError(`Extraction error: ${errMsg}. Ensure the PDF is not password-encrypted.`);
+      const errMsg = err instanceof Error ? err.message : '无法从该 PDF 中提取文本内容。';
+      setError(`提取失败：${errMsg}。请确认文件未被密码保护。`);
     } finally {
       setIsProcessing(false);
     }
@@ -87,7 +87,7 @@ export function PdfToMarkdownWorkspace() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Clipboard copy failed', err);
+      console.error('复制失败', err);
     }
   };
 
@@ -115,21 +115,20 @@ export function PdfToMarkdownWorkspace() {
     }
   };
 
-  // Word & character stats
   const characterCount = markdown.length;
   const wordCount = markdown.trim() ? markdown.trim().split(/\s+/).length : 0;
   const lineCount = markdown ? markdown.split('\n').length : 0;
 
   return (
     <div className="w-full space-y-6">
-      {/* Upload Dropzone (Visible when no markdown is extracted yet) */}
+      {/* 拖拽上传区 */}
       {!markdown && !isProcessing && (
         <div
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`relative border-2 border-dashed rounded-2xl p-10 sm:p-14 text-center cursor-pointer transition-all duration-200 ${
+          className={`border-2 border-dashed rounded-2xl p-10 sm:p-14 text-center cursor-pointer transition-all ${
             isDragging
               ? 'border-emerald-500 bg-emerald-50/40 ring-4 ring-emerald-500/10'
               : 'border-zinc-200/90 hover:border-zinc-400 bg-white/70 hover:bg-zinc-50/50'
@@ -144,27 +143,27 @@ export function PdfToMarkdownWorkspace() {
           />
 
           <div className="max-w-md mx-auto flex flex-col items-center">
-            <div className="w-14 h-14 rounded-xl bg-zinc-100 border border-zinc-200/80 flex items-center justify-center text-zinc-700 mb-4 shadow-2xs group-hover:scale-105 transition-transform">
+            <div className="w-14 h-14 rounded-xl bg-zinc-100 border border-zinc-200/80 flex items-center justify-center text-zinc-700 mb-4 shadow-2xs">
               <FileUp className="w-6 h-6 text-zinc-800" strokeWidth={1.5} />
             </div>
 
             <h3 className="text-base sm:text-lg font-semibold text-zinc-900 mb-1">
-              Drop your PDF here, or <span className="text-emerald-700 underline underline-offset-2">browse</span>
+              将 PDF 拖入此处，或 <span className="text-emerald-700 underline underline-offset-2">点击浏览本地文件</span>
             </h3>
             <p className="text-xs sm:text-sm text-zinc-500 max-w-sm mb-4">
-              All text extraction occurs directly inside your browser memory. Zero network requests made.
+              文本与大纲解析全部在浏览器内存中运行，零数据上传，断网亦可顺畅转换。
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-mono text-zinc-600">
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">.PDF files</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">Scanned OCR & Native</span>
-              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">Unlimited Size</span>
+            <div className="flex flex-wrap items-center justify-center gap-2 text-[11px] font-mono text-zinc-500">
+              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">支持原生与扫描版 PDF</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">不限文件体积</span>
+              <span className="px-2 py-0.5 rounded bg-zinc-100 border border-zinc-200">本地 RAM 计算</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* Processing State */}
+      {/* 转换进度展示 */}
       {isProcessing && (
         <div className="rounded-2xl border border-zinc-200 bg-white p-8 sm:p-12 text-center shadow-xs">
           <div className="max-w-md mx-auto space-y-4">
@@ -174,12 +173,12 @@ export function PdfToMarkdownWorkspace() {
 
             <div>
               <h4 className="text-base font-semibold text-zinc-900">{file?.name}</h4>
-              <p className="text-xs text-zinc-500 mt-0.5 font-mono">
-                {progress.message || 'Extracting layout & text...'}
+              <p className="text-xs text-zinc-500 mt-0.5">
+                {progress.message || '正在提取排版与文本内容...'}
               </p>
             </div>
 
-            {/* Progress Bar */}
+            {/* 进度条 */}
             <div className="w-full bg-zinc-100 rounded-full h-2 overflow-hidden border border-zinc-200">
               <div
                 className="bg-emerald-600 h-full rounded-full transition-all duration-300 ease-out"
@@ -189,17 +188,17 @@ export function PdfToMarkdownWorkspace() {
               />
             </div>
 
-            <div className="flex justify-between text-[11px] font-mono text-zinc-600">
-              <span>Local Worker Active</span>
+            <div className="flex justify-between text-[11px] font-mono text-zinc-500">
+              <span>本地 Worker 线程运行中</span>
               <span>
-                {progress.current} / {progress.total} Pages
+                {progress.current} / {progress.total} 页
               </span>
             </div>
           </div>
         </div>
       )}
 
-      {/* Error state */}
+      {/* 异常报错提示 */}
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50/60 p-4 flex items-start space-x-3 text-red-800 text-sm">
           <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" strokeWidth={1.5} />
@@ -210,17 +209,17 @@ export function PdfToMarkdownWorkspace() {
             onClick={() => setError(null)}
             className="text-xs text-red-600 hover:text-red-900 underline"
           >
-            Dismiss
+            忽略
           </button>
         </div>
       )}
 
-      {/* Converted Workspace Area */}
+      {/* 转换完成工作台 */}
       {markdown && !isProcessing && (
         <div className="rounded-2xl border border-zinc-200/90 bg-white shadow-xs overflow-hidden">
-          {/* Header Action Bar */}
+          {/* 工具栏 */}
           <div className="border-b border-zinc-200/90 bg-zinc-50/70 px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-3">
-            {/* Left: Document info */}
+            {/* 文档基本信息 */}
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 rounded-lg bg-emerald-100/70 border border-emerald-200 flex items-center justify-center text-emerald-700">
                 <FileCheck2 className="w-4 h-4" strokeWidth={1.75} />
@@ -230,53 +229,53 @@ export function PdfToMarkdownWorkspace() {
                   {file?.name || 'document.pdf'}
                 </h4>
                 <div className="flex items-center space-x-2 text-[11px] font-mono text-zinc-500">
-                  <span>{wordCount.toLocaleString()} words</span>
+                  <span>{wordCount.toLocaleString()} 词</span>
                   <span>•</span>
-                  <span>{characterCount.toLocaleString()} chars</span>
+                  <span>{characterCount.toLocaleString()} 字符</span>
                   <span>•</span>
-                  <span>{lineCount} lines</span>
+                  <span>{lineCount} 行</span>
                 </div>
               </div>
             </div>
 
-            {/* Middle: View Mode Switcher */}
+            {/* 视图模式切换 */}
             <div className="flex items-center bg-zinc-100 p-0.5 rounded-lg border border-zinc-200 text-xs">
               <button
                 onClick={() => setViewMode('split')}
                 className={`hidden md:inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md transition-all ${
                   viewMode === 'split'
-                    ? 'bg-white text-zinc-900 font-medium shadow-2xs'
+                    ? 'bg-white text-zinc-900 font-semibold shadow-2xs'
                     : 'text-zinc-600 hover:text-zinc-900'
                 }`}
               >
                 <Columns className="w-3.5 h-3.5" strokeWidth={1.5} />
-                <span>Split View</span>
+                <span>分栏对照</span>
               </button>
               <button
                 onClick={() => setViewMode('raw')}
                 className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md transition-all ${
                   viewMode === 'raw'
-                    ? 'bg-white text-zinc-900 font-medium shadow-2xs'
+                    ? 'bg-white text-zinc-900 font-semibold shadow-2xs'
                     : 'text-zinc-600 hover:text-zinc-900'
                 }`}
               >
                 <Code2 className="w-3.5 h-3.5" strokeWidth={1.5} />
-                <span>Raw Markdown</span>
+                <span>源码编辑</span>
               </button>
               <button
                 onClick={() => setViewMode('preview')}
                 className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-md transition-all ${
                   viewMode === 'preview'
-                    ? 'bg-white text-zinc-900 font-medium shadow-2xs'
+                    ? 'bg-white text-zinc-900 font-semibold shadow-2xs'
                     : 'text-zinc-600 hover:text-zinc-900'
                 }`}
               >
                 <Eye className="w-3.5 h-3.5" strokeWidth={1.5} />
-                <span>Preview</span>
+                <span>排版预览</span>
               </button>
             </div>
 
-            {/* Right: Actions */}
+            {/* 操作按钮 */}
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleCopy}
@@ -285,12 +284,12 @@ export function PdfToMarkdownWorkspace() {
                 {copied ? (
                   <>
                     <Check className="w-3.5 h-3.5 text-emerald-600" strokeWidth={2} />
-                    <span className="text-emerald-700">Copied!</span>
+                    <span className="text-emerald-700">已复制</span>
                   </>
                 ) : (
                   <>
                     <Copy className="w-3.5 h-3.5 text-zinc-500" strokeWidth={1.5} />
-                    <span>Copy</span>
+                    <span>一键复制</span>
                   </>
                 )}
               </button>
@@ -300,12 +299,12 @@ export function PdfToMarkdownWorkspace() {
                 className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium transition-all shadow-2xs active:scale-[0.98]"
               >
                 <Download className="w-3.5 h-3.5" strokeWidth={1.5} />
-                <span>Download .md</span>
+                <span>下载 .md 文件</span>
               </button>
 
               <button
                 onClick={handleReset}
-                title="Convert another document"
+                title="转换另一个文件"
                 className="p-1.5 rounded-lg border border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-all"
               >
                 <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.5} />
@@ -313,9 +312,9 @@ export function PdfToMarkdownWorkspace() {
             </div>
           </div>
 
-          {/* Editor & Preview Panels */}
+          {/* 编辑与排版双栏 */}
           <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-zinc-200 min-h-[460px]">
-            {/* Raw Markdown Editor Pane */}
+            {/* Markdown 源码编辑栏 */}
             {(viewMode === 'raw' || viewMode === 'split') && (
               <div
                 className={`flex flex-col bg-zinc-50/30 ${
@@ -323,8 +322,8 @@ export function PdfToMarkdownWorkspace() {
                 }`}
               >
                 <div className="border-b border-zinc-200/60 px-4 py-2 bg-zinc-100/50 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-                  <span>MARKDOWN SOURCE (EDITABLE)</span>
-                  <span>UTF-8</span>
+                  <span>MARKDOWN 源码 (可直接修改)</span>
+                  <span>UTF-8 纯文本</span>
                 </div>
                 <textarea
                   value={markdown}
@@ -336,7 +335,7 @@ export function PdfToMarkdownWorkspace() {
               </div>
             )}
 
-            {/* Formatted Rendered Preview Pane */}
+            {/* 排版渲染栏 */}
             {(viewMode === 'preview' || viewMode === 'split') && (
               <div
                 className={`flex flex-col bg-white overflow-y-auto max-h-[640px] ${
@@ -344,8 +343,8 @@ export function PdfToMarkdownWorkspace() {
                 }`}
               >
                 <div className="border-b border-zinc-200/60 px-4 py-2 bg-zinc-50 flex items-center justify-between text-[11px] font-mono text-zinc-500">
-                  <span>TYPOGRAPHY PREVIEW</span>
-                  <span>SYNTAX RENDER</span>
+                  <span>效果渲染预览</span>
+                  <span>标准排版规范</span>
                 </div>
                 <div className="p-6 sm:p-8 overflow-x-auto">
                   <div
