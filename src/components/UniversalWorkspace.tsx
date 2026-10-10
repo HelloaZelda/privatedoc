@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   FileUp,
   FileCheck2,
@@ -10,6 +11,7 @@ import {
   RotateCcw,
   Sparkles,
   AlertCircle,
+  ChevronDown,
 } from 'lucide-react';
 import { detectSupportedTargetFormats, ConversionPair, CONVERSION_PAIRS } from '@/lib/format-registry';
 import {
@@ -35,6 +37,7 @@ interface UniversalWorkspaceProps {
 }
 
 export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [availableTargets, setAvailableTargets] = useState<ConversionPair[]>([]);
   const [selectedTarget, setSelectedTarget] = useState<ConversionPair | null>(null);
@@ -241,8 +244,69 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
     }
   };
 
+  const imagePairs = CONVERSION_PAIRS.filter((p) => p.category === 'image');
+  const documentPairs = CONVERSION_PAIRS.filter((p) => p.category === 'document');
+  const dataPairs = CONVERSION_PAIRS.filter((p) => p.category === 'data');
+
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-4">
+      {/* 快捷下拉选择 xx 转 xx */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+        <div className="flex items-center space-x-2">
+          <label htmlFor="format-select" className="text-xs sm:text-sm font-medium text-zinc-600 whitespace-nowrap">
+            选择转换：
+          </label>
+          <div className="relative inline-block w-full sm:w-auto">
+            <select
+              id="format-select"
+              value={initialSlug || ''}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val) {
+                  router.push(`/convert/${val}`);
+                } else {
+                  router.push('/');
+                }
+              }}
+              className="w-full sm:w-64 appearance-none bg-white border border-zinc-200 hover:border-zinc-300 text-zinc-900 text-xs sm:text-sm font-medium rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 cursor-pointer shadow-2xs transition-colors"
+            >
+              <option value="">通用（拖入自动识别）</option>
+              <optgroup label="图片">
+                {imagePairs.map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {p.name}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="文档">
+                {documentPairs.map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {p.name}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="数据">
+                {dataPairs.map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {p.name}
+                  </option>
+                ))}
+              </optgroup>
+            </select>
+            <ChevronDown className="w-4 h-4 text-zinc-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
+        </div>
+
+        {initialSlug && (
+          <button
+            onClick={() => router.push('/')}
+            className="text-xs text-zinc-400 hover:text-zinc-700 transition-colors self-start sm:self-center"
+          >
+            重置为通用
+          </button>
+        )}
+      </div>
+
       {/* Upload Dropzone */}
       {!file && (
         <div
