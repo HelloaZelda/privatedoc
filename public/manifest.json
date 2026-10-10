@@ -1,0 +1,17 @@
+{
+  "name": "本地文转 LocalDoc",
+  "short_name": "LocalDoc",
+  "description": "100% In-Browser Private File & Document Converter. Zero server upload, offline capable.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#18181b",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

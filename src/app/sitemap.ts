@@ -7,7 +7,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const routes: MetadataRoute.Sitemap = [
     {
       url: BASE_URL,
-      lastModified: new Date('2026-10-09'),
+      lastModified: new Date('2026-10-10'),
+      changeFrequency: 'daily',
+      priority: 1.0,
+    },
+    {
+      url: `${BASE_URL}/en`,
+      lastModified: new Date('2026-10-10'),
       changeFrequency: 'daily',
       priority: 1.0,
     },
@@ -16,7 +22,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   for (const pair of CONVERSION_PAIRS) {
     routes.push({
       url: `${BASE_URL}/convert/${pair.slug}`,
-      lastModified: new Date('2026-10-09'),
+      lastModified: new Date('2026-10-10'),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    });
+    routes.push({
+      url: `${BASE_URL}/en/convert/${pair.slug}`,
+      lastModified: new Date('2026-10-10'),
       changeFrequency: 'weekly',
       priority: 0.9,
     });

@@ -558,3 +558,44 @@ export function detectSupportedTargetFormats(filename: string): ConversionPair[]
   const ext = lower.slice(lower.lastIndexOf('.'));
   return CONVERSION_PAIRS.filter((pair) => pair.fromExt.includes(ext));
 }
+
+export interface EnglishPairData {
+  title: string;
+  h1: string;
+  name: string;
+  shortDesc: string;
+  badge: string;
+  whatIsFrom: string;
+  whyConvert: string;
+  faqs: ConversionFaq[];
+}
+
+export function getEnglishPairData(pair: ConversionPair): EnglishPairData {
+  return {
+    title: pair.englishTitle || `Free ${pair.from} to ${pair.to} Converter Online - 100% Private & No Limit`,
+    h1: `${pair.from} to ${pair.to} Online Converter`,
+    name: `${pair.from} to ${pair.to}`,
+    shortDesc: `Convert ${pair.from} to ${pair.to} directly in your browser. 100% private, zero server upload, no file size limits.`,
+    badge: pair.category === 'image' ? 'Image' : pair.category === 'document' ? 'Document' : 'Data',
+    whatIsFrom: `${pair.from} is a standard format, but converting it to ${pair.to} enhances portability, compatibility, or workflow efficiency.`,
+    whyConvert: `Converting ${pair.from} to ${pair.to} ensures seamless cross-platform compatibility without sacrificing file privacy or uploading sensitive content to external servers.`,
+    faqs: [
+      {
+        q: `Are my ${pair.from} files uploaded to any remote server?`,
+        a: `No. All conversions happen entirely inside your browser's local memory (via WebAssembly & HTML5 Canvas). Zero data is sent to external servers.`,
+      },
+      {
+        q: 'Is there any file size limit or cost?',
+        a: 'It is 100% free with no file size limits, no daily restrictions, and no registration required.',
+      },
+      {
+        q: 'Can I use this tool offline?',
+        a: 'Yes. Once the page is loaded, you can disconnect from the internet and convert files locally in your browser.',
+      },
+      {
+        q: `Will converted ${pair.to} files preserve formatting?`,
+        a: `Yes, our high-precision client-side rendering pipeline preserves layout structure, character encoding, and transparency.`,
+      },
+    ],
+  };
+}

@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { CONVERSION_PAIRS } from '@/lib/format-registry';
 import { ArrowRight } from 'lucide-react';
 
-export function FormatMatrixGrid() {
+export function FormatMatrixGrid({ lang = 'zh' }: { lang?: 'zh' | 'en' }) {
+  const isEn = lang === 'en';
+
   return (
     <section className="py-8 border-t border-zinc-200">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-sm font-semibold text-zinc-900 mb-4">
-          格式列表
+          {isEn ? 'All Conversion Tools' : '格式列表'}
         </h2>
 
         {/* 紧凑清爽的网格 */}
@@ -18,12 +20,12 @@ export function FormatMatrixGrid() {
           {CONVERSION_PAIRS.map((pair) => (
             <Link
               key={pair.slug}
-              href={`/convert/${pair.slug}`}
+              href={isEn ? `/en/convert/${pair.slug}` : `/convert/${pair.slug}`}
               className="group p-3 rounded-xl border border-zinc-200/90 bg-white hover:border-zinc-400 hover:shadow-2xs transition-all flex flex-col justify-between"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors">
-                  {pair.name}
+                  {isEn ? `${pair.from} to ${pair.to}` : pair.name}
                 </span>
                 <ArrowRight className="w-3 h-3 text-zinc-400 group-hover:text-emerald-700 transform group-hover:translate-x-0.5 transition-all" />
               </div>

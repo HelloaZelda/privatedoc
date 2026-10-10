@@ -34,9 +34,10 @@ import { parseMarkdownToHtml, exportElementToPdf } from '@/lib/markdown-to-pdf';
 
 interface UniversalWorkspaceProps {
   initialSlug?: string;
+  lang?: 'zh' | 'en';
 }
 
-export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
+export function UniversalWorkspace({ initialSlug, lang = 'zh' }: UniversalWorkspaceProps) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [availableTargets, setAvailableTargets] = useState<ConversionPair[]>([]);
@@ -247,6 +248,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
   const imagePairs = CONVERSION_PAIRS.filter((p) => p.category === 'image');
   const documentPairs = CONVERSION_PAIRS.filter((p) => p.category === 'document');
   const dataPairs = CONVERSION_PAIRS.filter((p) => p.category === 'data');
+  const isEn = lang === 'en';
 
   return (
     <div className="w-full space-y-4">
@@ -254,7 +256,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
         <div className="flex items-center space-x-2">
           <label htmlFor="format-select" className="text-xs sm:text-sm font-medium text-zinc-600 whitespace-nowrap">
-            选择转换：
+            {isEn ? 'Convert:' : '选择转换：'}
           </label>
           <div className="relative inline-block w-full sm:w-auto">
             <select
@@ -262,33 +264,34 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
               value={initialSlug || ''}
               onChange={(e) => {
                 const val = e.target.value;
+                const prefix = isEn ? '/en' : '';
                 if (val) {
-                  router.push(`/convert/${val}`);
+                  router.push(`${prefix}/convert/${val}`);
                 } else {
-                  router.push('/');
+                  router.push(prefix || '/');
                 }
               }}
               className="w-full sm:w-64 appearance-none bg-white border border-zinc-200 hover:border-zinc-300 text-zinc-900 text-xs sm:text-sm font-medium rounded-xl pl-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-zinc-900/10 cursor-pointer shadow-2xs transition-colors"
             >
-              <option value="">通用（拖入自动识别）</option>
-              <optgroup label="图片">
+              <option value="">{isEn ? 'Universal (Auto Detect)' : '通用（拖入自动识别）'}</option>
+              <optgroup label={isEn ? 'Images' : '图片'}>
                 {imagePairs.map((p) => (
                   <option key={p.slug} value={p.slug}>
-                    {p.name}
+                    {isEn ? `${p.from} to ${p.to}` : p.name}
                   </option>
                 ))}
               </optgroup>
-              <optgroup label="文档">
+              <optgroup label={isEn ? 'Documents' : '文档'}>
                 {documentPairs.map((p) => (
                   <option key={p.slug} value={p.slug}>
-                    {p.name}
+                    {isEn ? `${p.from} to ${p.to}` : p.name}
                   </option>
                 ))}
               </optgroup>
-              <optgroup label="数据">
+              <optgroup label={isEn ? 'Data' : '数据'}>
                 {dataPairs.map((p) => (
                   <option key={p.slug} value={p.slug}>
-                    {p.name}
+                    {isEn ? `${p.from} to ${p.to}` : p.name}
                   </option>
                 ))}
               </optgroup>
@@ -299,10 +302,10 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
 
         {initialSlug && (
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push(isEn ? '/en' : '/')}
             className="text-xs text-zinc-400 hover:text-zinc-700 transition-colors self-start sm:self-center"
           >
-            重置为通用
+            {isEn ? 'Reset' : '重置为通用'}
           </button>
         )}
       </div>
@@ -335,19 +338,32 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
 
             <h3 className="text-base sm:text-lg font-semibold text-zinc-900 mb-2">
               {lockedPair ? (
-                <>
-                  拖入 <span className="text-zinc-900 font-bold">{lockedPair.from}</span> 文件，直接转为{' '}
-                  <span className="text-emerald-700 font-bold">{lockedPair.to}</span>
-                </>
+                isEn ? (
+                  <>
+                    Drop <span className="text-zinc-900 font-bold">{lockedPair.from}</span> file to convert to{' '}
+                    <span className="text-emerald-700 font-bold">{lockedPair.to}</span>
+                  </>
+                ) : (
+                  <>
+                    拖入 <span className="text-zinc-900 font-bold">{lockedPair.from}</span> 文件，直接转为{' '}
+                    <span className="text-emerald-700 font-bold">{lockedPair.to}</span>
+                  </>
+                )
               ) : (
-                <>
-                  拖入文件，或 <span className="text-emerald-700 underline underline-offset-2">点击选择</span>
-                </>
+                isEn ? (
+                  <>
+                    Drop a file here, or <span className="text-emerald-700 underline underline-offset-2">browse</span>
+                  </>
+                ) : (
+                  <>
+                    拖入文件，或 <span className="text-emerald-700 underline underline-offset-2">点击选择</span>
+                  </>
+                )
               )}
             </h3>
 
             <p className="text-xs text-zinc-400 mb-4">
-              免登录 · 不限文件大小 · 纯本地转换
+              {isEn ? 'No Sign Up · No File Limit · 100% In-Browser' : '免登录 · 不限文件大小 · 纯本地转换'}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-mono text-zinc-600">
@@ -394,13 +410,13 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
               onClick={resetAll}
               className="text-xs font-mono text-zinc-500 hover:text-zinc-900 underline"
             >
-              更换文件
+              {isEn ? 'Change file' : '更换文件'}
             </button>
           </div>
 
           <div>
             <label className="text-xs text-zinc-500 block mb-3">
-              选择目标格式：
+              {isEn ? 'Select target format:' : '选择目标格式：'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {availableTargets.map((target) => (
@@ -418,7 +434,7 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-semibold text-zinc-900">
-                      转为 {target.to}
+                      {isEn ? `Convert to ${target.to}` : `转为 ${target.to}`}
                     </span>
                     <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-200/80 text-zinc-700">
                       {target.toExt}
@@ -477,12 +493,12 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
                   {copied ? (
                     <>
                       <Check className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>已复制</span>
+                      <span>{isEn ? 'Copied' : '已复制'}</span>
                     </>
                   ) : (
                     <>
                       <Copy className="w-3.5 h-3.5 text-zinc-500" />
-                      <span>复制</span>
+                      <span>{isEn ? 'Copy' : '复制'}</span>
                     </>
                   )}
                 </button>
@@ -493,13 +509,13 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
                 className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium transition-all shadow-2xs"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>下载 ({selectedTarget?.toExt})</span>
+                <span>{isEn ? `Download (${selectedTarget?.toExt})` : `下载 (${selectedTarget?.toExt})`}</span>
               </button>
 
               <button
                 onClick={resetAll}
                 className="p-1.5 rounded-lg border border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
-                title="转换另一个文件"
+                title={isEn ? 'Convert another file' : '转换另一个文件'}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
               </button>
@@ -527,13 +543,13 @@ export function UniversalWorkspace({ initialSlug }: UniversalWorkspaceProps) {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={imgSrc} alt={`Converted preview ${idx + 1}`} className="w-full rounded border max-h-80 object-contain bg-zinc-100" />
                   <div className="mt-2 flex items-center justify-between text-xs font-mono text-zinc-500 px-1">
-                    <span>{selectedTarget?.to} 预览</span>
+                    <span>{selectedTarget?.to} {isEn ? 'Preview' : '预览'}</span>
                     <a
                       href={imgSrc}
                       download={`${file?.name.replace(/\.[^/.]+$/, '') || 'image'}${selectedTarget?.toExt || '.png'}`}
                       className="text-emerald-700 hover:underline"
                     >
-                      单独保存
+                      {isEn ? 'Save Image' : '单独保存'}
                     </a>
                   </div>
                 </div>
