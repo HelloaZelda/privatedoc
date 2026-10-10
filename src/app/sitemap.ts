@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { CONVERSION_PAIRS } from '@/lib/format-registry';
 
-const BASE_URL = 'https://privatedoc-green.vercel.app';
+const BASE_URL = 'https://doc.irisproject.dpdns.org';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const routes: MetadataRoute.Sitemap = [

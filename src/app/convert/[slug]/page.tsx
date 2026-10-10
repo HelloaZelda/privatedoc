@@ -13,7 +13,7 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-const SITE_URL = 'https://privatedoc-green.vercel.app';
+const SITE_URL = 'https://doc.irisproject.dpdns.org';
 
 export function generateStaticParams() {
   return CONVERSION_PAIRS.map((pair) => ({

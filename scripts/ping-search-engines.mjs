@@ -1,7 +1,7 @@
 // Automated Headless Search Engine Submission Script (IndexNow + Google Sitemap Ping)
 // 100% Zero-registration instant crawling protocol for Bing, Yandex, Seznam & Google
 
-const HOST = 'privatedoc-green.vercel.app';
+const HOST = 'doc.irisproject.dpdns.org';
 const KEY = '57656e7a6875616e2d6c6f63616c646f';
 const SITEMAP_URL = `https://${HOST}/sitemap.xml`;
 
