@@ -6,10 +6,12 @@ import { X } from 'lucide-react';
 interface SponsorModalProps {
   isOpen: boolean;
   onClose: () => void;
+  lang?: 'zh' | 'en';
 }
 
-export function SponsorModal({ isOpen, onClose }: SponsorModalProps) {
+export function SponsorModal({ isOpen, onClose, lang = 'zh' }: SponsorModalProps) {
   if (!isOpen) return null;
+  const isEn = lang === 'en';
 
   return (
     <div
@@ -23,25 +25,32 @@ export function SponsorModal({ isOpen, onClose }: SponsorModalProps) {
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
-          title="关闭"
+          title={isEn ? 'Close' : '关闭'}
         >
           <X className="w-4 h-4" />
         </button>
 
         <div className="text-center">
-          <h3 className="text-sm font-semibold text-zinc-900">赞助</h3>
+          <h3 className="text-sm font-semibold text-zinc-900">
+            {isEn ? 'Support Developer' : '赞助支持'}
+          </h3>
+          <p className="text-xs text-zinc-400 mt-1">
+            {isEn ? 'Buy the developer a coffee ☕' : '请作者喝杯咖啡 ☕'}
+          </p>
         </div>
 
-        <div className="p-2 rounded-xl border border-zinc-200 bg-zinc-50 flex flex-col items-center justify-center">
+        <div className="p-3 rounded-xl border border-zinc-200 bg-zinc-50 flex flex-col items-center justify-center">
           <div className="w-48 h-48 rounded-lg bg-white border border-zinc-200 p-2 flex items-center justify-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/sponsor-qr.png"
-              alt="微信赞助收款码"
+              alt={isEn ? 'WeChat Pay QR' : '微信赞助收款码'}
               className="w-full h-full object-contain"
             />
           </div>
-          <p className="text-xs text-zinc-500 mt-2">微信扫码</p>
+          <p className="text-xs text-zinc-500 mt-2 font-medium">
+            {isEn ? 'Scan with WeChat' : '微信扫码赞助'}
+          </p>
         </div>
       </div>
     </div>

@@ -29,21 +29,19 @@ export function Header({ lang = 'zh' }: { lang?: 'zh' | 'en' }) {
               {lang === 'zh' ? 'English' : '中文'}
             </Link>
 
-            {lang === 'zh' && (
-              <button
-                onClick={() => setIsSponsorOpen(true)}
-                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 hover:text-zinc-900 text-xs font-medium transition-all"
-              >
-                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-                <span>赞助</span>
-              </button>
-            )}
+            <button
+              onClick={() => setIsSponsorOpen(true)}
+              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 hover:text-zinc-900 text-xs font-medium transition-all"
+            >
+              <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+              <span>{lang === 'zh' ? '赞助' : 'Sponsor'}</span>
+            </button>
           </div>
         </div>
       </header>
 
       {/* 赞助二维码弹窗 */}
-      <SponsorModal isOpen={isSponsorOpen} onClose={() => setIsSponsorOpen(false)} />
+      <SponsorModal isOpen={isSponsorOpen} onClose={() => setIsSponsorOpen(false)} lang={lang} />
     </>
   );
 }

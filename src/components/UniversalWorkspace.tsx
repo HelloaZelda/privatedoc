@@ -12,7 +12,9 @@ import {
   Sparkles,
   AlertCircle,
   ChevronDown,
+  Heart,
 } from 'lucide-react';
+import { SponsorModal } from './SponsorModal';
 import { detectSupportedTargetFormats, ConversionPair, CONVERSION_PAIRS } from '@/lib/format-registry';
 import {
   convertPdfToTxt,
@@ -50,6 +52,7 @@ export function UniversalWorkspace({ initialSlug, lang = 'zh' }: UniversalWorksp
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isSponsorOpen, setIsSponsorOpen] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -513,6 +516,15 @@ export function UniversalWorkspace({ initialSlug, lang = 'zh' }: UniversalWorksp
               </button>
 
               <button
+                onClick={() => setIsSponsorOpen(true)}
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 hover:text-zinc-900 text-xs font-medium transition-all shadow-2xs"
+                title={isEn ? 'Buy developer a coffee' : '赞助作者'}
+              >
+                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+                <span>{isEn ? 'Tip' : '请喝咖啡'}</span>
+              </button>
+
+              <button
                 onClick={resetAll}
                 className="p-1.5 rounded-lg border border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100"
                 title={isEn ? 'Convert another file' : '转换另一个文件'}
@@ -558,6 +570,9 @@ export function UniversalWorkspace({ initialSlug, lang = 'zh' }: UniversalWorksp
           )}
         </div>
       )}
+
+      {/* 赞助弹窗 */}
+      <SponsorModal isOpen={isSponsorOpen} onClose={() => setIsSponsorOpen(false)} lang={lang} />
     </div>
   );
 }
