@@ -12,9 +12,10 @@ export function Header({ lang = 'zh' }: { lang?: 'zh' | 'en' }) {
     <>
       <header className="border-b border-zinc-200/90 bg-white/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <Link href={lang === 'zh' ? '/' : '/en'} className="flex items-center space-x-2">
-            <div className="w-7 h-7 rounded-lg bg-zinc-900 flex items-center justify-center text-white">
-              <Lock className="w-3.5 h-3.5" strokeWidth={2} />
+          <Link href={lang === 'zh' ? '/' : '/en'} className="flex items-center space-x-2.5">
+            <div className="w-7 h-7 rounded-lg overflow-hidden shadow-2xs border border-zinc-800 shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/icon.svg" alt="LocalDoc Logo" className="w-full h-full object-cover" />
             </div>
             <span className="font-bold text-base tracking-tight text-zinc-900">
               {lang === 'zh' ? '本地文转' : 'LocalDoc'}

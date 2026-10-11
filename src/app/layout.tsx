@@ -49,6 +49,10 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   manifest: '/manifest.json',
+  icons: [
+    { rel: 'icon', url: '/icon.svg', type: 'image/svg+xml' },
+    { rel: 'apple-touch-icon', url: '/icon.svg' },
+  ],
   other: {
     'google-adsense-account': 'ca-pub-1769420671918341',
   },
