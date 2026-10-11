@@ -49,6 +49,9 @@ export const metadata: Metadata = {
     canonical: SITE_URL,
   },
   manifest: '/manifest.json',
+  other: {
+    'google-adsense-account': 'ca-pub-1769420671918341',
+  },
 };
 
 export default function RootLayout({
@@ -88,14 +91,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {adsenseClientId && (
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
-            crossOrigin="anonymous"
-            strategy="afterInteractive"
-          />
-        )}
+        <meta name="google-adsense-account" content="ca-pub-1769420671918341" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1769420671918341"
+          crossOrigin="anonymous"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
