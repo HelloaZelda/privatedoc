@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const SITE_URL = 'https://privatedoc-green.vercel.app';
+const SITE_URL = 'https://irisproject.dpdns.org';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

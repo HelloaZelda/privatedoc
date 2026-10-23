@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const BASE_URL = 'https://privatedoc-green.vercel.app';
+const BASE_URL = 'https://irisproject.dpdns.org';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,6 +11,14 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: 'Googlebot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Mediapartners-Google',
+        allow: '/',
+      },
+      {
+        userAgent: 'AdsBot-Google',
         allow: '/',
       },
       {
