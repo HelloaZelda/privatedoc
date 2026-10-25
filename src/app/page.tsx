@@ -12,11 +12,11 @@ import {
   Zap,
   Lock,
   Cpu,
-  FileCheck,
-  CheckCircle2,
   HelpCircle,
-  HardDriveDownload,
-  Flame,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  FileText,
 } from 'lucide-react';
 
 export default function Home() {
@@ -40,100 +40,175 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-50/50">
+    <div className="min-h-screen flex flex-col bg-zinc-50/70 relative overflow-x-hidden selection:bg-emerald-100 selection:text-emerald-900">
+      {/* Top Ambient Lighting Aura */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[480px] overflow-hidden -z-10 pointer-events-none select-none">
+        <div className="absolute top-[-140px] left-1/2 -translate-x-1/2 w-[760px] h-[360px] bg-gradient-to-b from-emerald-200/40 via-teal-100/25 to-transparent blur-3xl rounded-full" />
+      </div>
+
       <Header />
 
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 pt-10 pb-16">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-medium mb-3 border border-emerald-200/50">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>100% 浏览器沙盒计算 · 零云端上传 · 保护企业商业机密</span>
+      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-20">
+        {/* Hero Section */}
+        <div className="text-center mb-10 sm:mb-14">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200/80 shadow-[0_2px_10px_rgba(0,0,0,0.03)] mb-5 ring-1 ring-black/[0.02]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="text-xs font-semibold text-zinc-700 tracking-wide font-mono">
+              100% 浏览器客户端沙盒 · 零云端上传 · 保护商业机密
+            </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
-            本地离线文档格式互转站
+
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-900 leading-[1.12]">
+            本地文档格式 <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 bg-clip-text text-transparent">极速秒转</span>
           </h1>
-          <p className="mt-2.5 text-sm sm:text-base text-zinc-500 max-w-2xl mx-auto">
-            极速、安全、零泄露风险的纯前端文件转换平台。PDF、Markdown、Word、CSV、图片本地毫秒级互转。
+
+          <p className="mt-3.5 sm:mt-4 text-sm sm:text-base lg:text-lg text-zinc-500 max-w-2xl mx-auto leading-relaxed font-normal">
+            专为财务、法务、开发者及敏感内容打造的纯前端文档互转基础设施。PDF、Word、Markdown、CSV 本地毫秒级转换，数据不离本机。
           </p>
         </div>
 
-        <div className="w-full mb-12">
+        {/* Universal Workspace Dropzone */}
+        <div className="w-full mb-14">
           <UniversalWorkspace />
         </div>
 
-        <div className="my-12">
-          <FormatMatrixGrid />
-        </div>
+        {/* Format Matrix Bento */}
+        <FormatMatrixGrid />
 
-        {/* 核心价值与技术架构解密（丰富 Google 索引抓取实质内容） */}
-        <section className="my-14 space-y-8">
-          <div className="text-center">
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900">
-              为什么现代专业人士都在转向“纯本地转换”？
+        {/* Asymmetrical Bento Grid: Why LocalDoc */}
+        <section className="my-20">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center space-x-1.5 text-xs font-mono font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full mb-2.5">
+              <span>架构解密</span>
+              <span>·</span>
+              <span>Why LocalDoc</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900">
+              为什么企业与专业人士都在拒绝“云端上传”？
             </h2>
-            <p className="mt-1 text-xs sm:text-sm text-zinc-500">
-              拒绝把包含财务、法律、人事与知识产权的核心文档上传给未知第三方
+            <p className="mt-2 text-xs sm:text-sm text-zinc-500 max-w-xl mx-auto">
+              把包含未公开财报、人事合同或核心代码的文件上传到云端服务器，存在不可逆的泄露与模型非法抓取风险
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-2xs">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4">
-                <Lock className="w-5 h-5" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+            {/* Bento Card 1 - Double Width Highlight */}
+            <div className="md:col-span-2 p-2 sm:p-2.5 rounded-[2rem] bg-gradient-to-b from-zinc-200/70 via-zinc-100/50 to-zinc-200/70 border border-zinc-200/90 shadow-[0_15px_35px_rgba(0,0,0,0.02)]">
+              <div className="h-full rounded-[calc(2rem-0.625rem)] bg-white p-7 sm:p-9 border border-zinc-200/80 flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200/70 text-emerald-700 flex items-center justify-center mb-5 shadow-3xs">
+                    <Lock className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-extrabold text-lg sm:text-xl text-zinc-900 mb-2.5">
+                    绝对零网络回传 · 内存沙箱即用即毁
+                  </h3>
+                  <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed max-w-xl">
+                    所有的文件格式转换逻辑均通过 Mozilla PDF.js、Mammoth 及纯前端 WebAssembly 模块编译运行在您设备的本地内存中。断网模式下所有转换功能依然 100% 正常运转，完全杜绝第三方拦截与云端存储。
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-5 border-t border-zinc-100 flex flex-wrap items-center gap-3 text-xs font-mono text-zinc-500">
+                  <span className="inline-flex items-center text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg">
+                    <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                    端到端本地隔离
+                  </span>
+                  <span className="inline-flex items-center text-zinc-600 bg-zinc-100 px-2.5 py-1 rounded-lg">
+                    GDPR / 企业数据合规
+                  </span>
+                </div>
               </div>
-              <h3 className="font-bold text-base text-zinc-900 mb-2">绝对零数据上传</h3>
-              <p className="text-xs text-zinc-600 leading-relaxed">
-                所有运算在浏览器 JavaScript/WebAssembly 沙箱内完成，数据绝不经过外部网络传输。完全满足最高等级商业机密与合规要求。
-              </p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-2xs">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center mb-4">
-                <Zap className="w-5 h-5" />
+            {/* Bento Card 2 - Speed */}
+            <div className="p-2 sm:p-2.5 rounded-[2rem] bg-zinc-200/60 border border-zinc-200/80 shadow-[0_15px_35px_rgba(0,0,0,0.02)]">
+              <div className="h-full rounded-[calc(2rem-0.625rem)] bg-white p-7 border border-zinc-200/80 flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200/70 text-amber-700 flex items-center justify-center mb-5 shadow-3xs">
+                    <Zap className="w-6 h-6" />
+                  </div>
+                  <h3 className="font-extrabold text-base sm:text-lg text-zinc-900 mb-2">
+                    本地 CPU 硬件加速
+                  </h3>
+                  <p className="text-xs text-zinc-600 leading-relaxed">
+                    无需忍受漫长的公网文件上传与远程排队，直接调用本机多核 CPU 进行并行流式解析，数百页文档毫秒级秒出。
+                  </p>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-zinc-100 text-[11px] font-mono text-amber-800 font-bold">
+                  ⚡ 0 宽带消耗 · 0 排队等待
+                </div>
               </div>
-              <h3 className="font-bold text-base text-zinc-900 mb-2">毫秒级极速响应</h3>
-              <p className="text-xs text-zinc-600 leading-relaxed">
-                省去耗费带宽的云端文件上传与远程排队等待，直接释放您本地 CPU 的多线程并行计算能力，拖拽即转，立等可取。
-              </p>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-zinc-200/80 shadow-2xs">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center mb-4">
-                <Cpu className="w-5 h-5" />
+            {/* Bento Card 3 - Offline PWA */}
+            <div className="md:col-span-3 p-2 sm:p-2.5 rounded-[2rem] bg-zinc-200/60 border border-zinc-200/80 shadow-[0_15px_35px_rgba(0,0,0,0.02)]">
+              <div className="rounded-[calc(2rem-0.625rem)] bg-white p-6 sm:p-8 border border-zinc-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-200/70 text-indigo-700 flex items-center justify-center shrink-0 shadow-3xs">
+                    <Cpu className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-base text-zinc-900">
+                      支持离线飞行模式与断网 PWA
+                    </h3>
+                    <p className="text-xs text-zinc-500 mt-0.5">
+                      内置 Service Worker 离线引擎。在飞机航班、高铁隧道或无公网内网机房，随时打开浏览器即可完成文档互转。
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href="/about"
+                  className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-full border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-xs font-semibold text-zinc-800 transition-colors self-start sm:self-auto shrink-0"
+                >
+                  <span>阅读技术白皮书</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
-              <h3 className="font-bold text-base text-zinc-900 mb-2">支持断网与离线 PWA</h3>
-              <p className="text-xs text-zinc-600 leading-relaxed">
-                内置 Service Worker 离线引擎。首次加载后即使在高铁、航班或内网断网环境下，打开浏览器即可随时随地完成文档互转。
-              </p>
             </div>
           </div>
         </section>
 
-        {/* 常见问题解答 FAQ 结构化内容 */}
-        <section className="my-14 bg-white p-6 sm:p-10 rounded-2xl border border-zinc-200/80 shadow-2xs">
-          <div className="flex items-center space-x-2.5 mb-6">
-            <HelpCircle className="w-5 h-5 text-emerald-600" />
-            <h2 className="text-xl font-bold tracking-tight text-zinc-900">
-              常见问题解答 (FAQ)
-            </h2>
-          </div>
-
-          <div className="divide-y divide-zinc-100">
-            {faqs.map((faq, idx) => (
-              <div key={idx} className="py-4 first:pt-0 last:pb-0">
-                <h3 className="text-sm font-semibold text-zinc-900 mb-1.5 flex items-start">
-                  <span className="text-emerald-600 font-mono mr-2">Q{idx + 1}.</span>
-                  {faq.q}
-                </h3>
-                <p className="text-xs sm:text-sm text-zinc-600 pl-6 leading-relaxed">
-                  {faq.a}
+        {/* FAQ Bento Section */}
+        <section className="my-20 p-2 sm:p-2.5 rounded-[2.5rem] bg-gradient-to-b from-zinc-200/60 via-zinc-100/30 to-zinc-200/60 border border-zinc-200/80 shadow-[0_15px_35px_rgba(0,0,0,0.02)]">
+          <div className="rounded-[calc(2.5rem-0.625rem)] bg-white p-6 sm:p-10 border border-zinc-200/80">
+            <div className="flex items-center space-x-2.5 mb-8">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200/70 text-emerald-700 flex items-center justify-center shadow-3xs">
+                <HelpCircle className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold tracking-tight text-zinc-900">
+                  常见问题解答 (FAQ)
+                </h2>
+                <p className="text-xs text-zinc-400 font-mono mt-0.5">
+                  Frequently Asked Questions & Technical Specifications
                 </p>
               </div>
-            ))}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              {faqs.map((faq, idx) => (
+                <div key={idx} className="p-4 sm:p-5 rounded-2xl bg-zinc-50/70 border border-zinc-200/70">
+                  <h3 className="text-sm font-bold text-zinc-900 mb-2 flex items-start">
+                    <span className="text-emerald-700 font-mono mr-2 font-black">Q{idx + 1}.</span>
+                    {faq.q}
+                  </h3>
+                  <p className="text-xs text-zinc-600 leading-relaxed pl-5 font-normal">
+                    {faq.a}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        <AdSenseSlot />
+        {/* AdSense Slot */}
+        <div className="my-10">
+          <AdSenseSlot />
+        </div>
       </main>
 
       <Footer />
